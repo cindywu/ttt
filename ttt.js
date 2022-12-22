@@ -32,15 +32,30 @@ const player = playerX ? "X" : "0"
 readline.question(`${player}'s turn!\npick a spot to place your ${player}...`, spot => {
   console.log(`${player} picked ${spot}!`);
   checkIfAvailable(spot - 1, board, player)
-  readline.close();
+  // readline.close();
 });
 
 const checkIfAvailable = (spot, board, player) => {
   let boardCopy = board
-
   boardCopy[spot] = player
-  printBoard(boardCopy)
+  // printBoard(boardCopy)
+  nextMove(boardCopy, player)
+}
 
+const nextMove = (board, player) =>{
+  printBoard(board)
+  let newPlayer
+  if (player === "X") {
+    newPlayer = "O"
+  } else {
+    newPlayer = "X"
+  }
+  readline.question(`${newPlayer}'s turn!\npick a spot to place your ${newPlayer}...`, spot => {
+    console.log(`${newPlayer} picked ${spot}!`);
+    checkIfAvailable(spot - 1, board, newPlayer)
+    // readline.close();
+  }
+  )
 }
 
 
