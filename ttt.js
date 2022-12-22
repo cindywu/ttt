@@ -29,17 +29,90 @@ printBoard(board)
 
 const player = playerX ? "X" : "0"
 
-readline.question(`${player}'s turn!\npick a spot to place your ${player}...`, spot => {
+readline.question(`${player}'s turn! pick a spot...`, spot => {
   console.log(`${player} picked ${spot}!`);
   checkIfAvailable(spot - 1, board, player)
-  // readline.close();
-});
+})
+
+const winningCombos = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9],
+  [1, 4, 7],
+  [2, 5, 8],
+  [3, 6, 9],
+  [1, 5, 9],
+  [3, 5, 7]
+]
+
+const checkIfWin = (board) => {
+  let win = false
+  winningCombos.forEach(combo => {
+    if (board[combo[0] - 1] === "X") {
+      if (board[combo[1] - 1] === "X") {
+        if (board[combo[2] - 1] === "X") {
+          // console.log('X wins!')
+          win = true
+        }
+      }
+    }
+    if (board[combo[0] - 1] === "O") {
+      if (board[combo[1] - 1] === "O") {
+        if (board[combo[2] - 1] === "O") {
+          // console.log('O wins!')
+          win = true
+        }
+      }
+    }
+  })
+  return win
+}
+
+const wannaPlayAgain = () => {
+  readline.question(`wanna play again? (y/n)`, answer => {
+    if (answer === "y") {
+      console.log('starting new game...')
+      const board = ["", "", "", "", "", "", "", "", ""]
+      const playerX = true
+      printBoard(board)
+      const player = playerX ? "X" : "0"
+      readline.question(`${player}'s turn! pick a spot...`, spot => {
+        console.log(`${player} picked ${spot}!`);
+        checkIfAvailable(spot - 1, board, player)
+      });
+    } else {
+      console.log('goodbye!')
+      readline.close();
+    }
+  })
+}
 
 const checkIfAvailable = (spot, board, player) => {
   let boardCopy = board
-  boardCopy[spot] = player
-  // printBoard(boardCopy)
-  nextMove(boardCopy, player)
+  let win = false
+  if (boardCopy[spot] === "") {
+    boardCopy[spot] = player
+    win = checkIfWin(boardCopy)
+    if (!win) {
+      nextMove(boardCopy, player)
+    } else {
+      printBoard(boardCopy)
+      console.log(`${player} wins!`)
+      wannaPlayAgain()
+    }
+  } else {
+    retryMove(board, player, spot)
+  }
+}
+
+const retryMove = (board, player, spot) => {
+  printBoard(board)
+  readline.question(`${spot + 1} is already taken... ${player}, pick a different spot!\n...`, spot => {
+    console.log(`${player} picked ${spot}!`);
+    checkIfAvailable(spot - 1, board, player)
+  }
+  )
+
 }
 
 const nextMove = (board, player) =>{
@@ -53,7 +126,6 @@ const nextMove = (board, player) =>{
   readline.question(`${newPlayer}'s turn!\npick a spot to place your ${newPlayer}...`, spot => {
     console.log(`${newPlayer} picked ${spot}!`);
     checkIfAvailable(spot - 1, board, newPlayer)
-    // readline.close();
   }
   )
 }
