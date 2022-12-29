@@ -135,12 +135,10 @@ const nextMove = (board, player) =>{
   let newPlayer
   if (player === "X") {
     newPlayer = "O"
-    console.log('board', board)
     let spot
     if (board[0] === "X" && board[4] !== "O") {
       spot = 5
     } else {
-      console.log('random spot!')
       spot = Math.floor(Math.random() * 9) + 1
     }
     checkIfAvailable(spot - 1, board, newPlayer)
