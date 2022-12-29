@@ -45,6 +45,14 @@ const winningCombos = [
   [3, 5, 7]
 ]
 
+const checkIfDraw = (board) => {
+  let draw = false
+  if (!board.includes("")) {
+    draw = true
+  }
+  return draw
+}
+
 const checkIfWin = (board) => {
   let win = false
   winningCombos.forEach(combo => {
@@ -93,12 +101,19 @@ const checkIfAvailable = (spot, board, player) => {
   if (boardCopy[spot] === "") {
     boardCopy[spot] = player
     win = checkIfWin(boardCopy)
-    if (!win) {
-      nextMove(boardCopy, player)
-    } else {
+    draw = checkIfDraw(boardCopy)
+    if (draw) {
       printBoard(boardCopy)
-      console.log(`${player} wins!`)
+      console.log('draw! no one wins')
       wannaPlayAgain()
+    } else {
+      if (!win) {
+        nextMove(boardCopy, player)
+      } else {
+        printBoard(boardCopy)
+        console.log(`${player} wins!`)
+        wannaPlayAgain()
+      }
     }
   } else {
     retryMove(board, player, spot)
