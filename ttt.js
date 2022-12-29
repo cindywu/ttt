@@ -3,7 +3,21 @@ console.log('tic tac toe, three in a row...')
 const readline = require('readline').createInterface({
   input: process.stdin,
   output: process.stdout
-});
+})
+
+const board = ["", "", "", "", "", "", "", "", ""]
+const playerX = true
+const winningCombos = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9],
+  [1, 4, 7],
+  [2, 5, 8],
+  [3, 6, 9],
+  [1, 5, 9],
+  [3, 5, 7]
+]
+const player = playerX ? "X" : "0"
 
 const printBoard = (board) => {
   console.log(
@@ -22,28 +36,39 @@ const printBoard = (board) => {
   )
 }
 
-const board = ["", "", "", "", "", "", "", "", ""]
-const playerX = true
-
 printBoard(board)
-
-const player = playerX ? "X" : "0"
 
 readline.question(`${player}'s turn! pick a spot...`, spot => {
   console.log(`${player} picked ${spot}!`);
-  checkIfAvailable(spot - 1, board, player)
+  checkIfAvailable(spot - 1, board, player) // (int, array, string)
 })
 
-const winningCombos = [
-  [1, 2, 3],
-  [4, 5, 6],
-  [7, 8, 9],
-  [1, 4, 7],
-  [2, 5, 8],
-  [3, 6, 9],
-  [1, 5, 9],
-  [3, 5, 7]
-]
+const checkIfAvailable = (spot, board, player) => {
+  let boardCopy = board
+  let win = false
+  if (boardCopy[spot] === "") {
+    boardCopy[spot] = player
+    win = checkIfWin(boardCopy)
+    draw = checkIfDraw(boardCopy)
+    if (draw) {
+      printBoard(boardCopy)
+      console.log('draw! no one wins')
+      wannaPlayAgain()
+    } else {
+      if (!win) {
+        nextMove(boardCopy, player)
+      } else {
+        printBoard(boardCopy)
+        console.log(`${player} wins!`)
+        wannaPlayAgain()
+      }
+    }
+  } else {
+    retryMove(board, player, spot)
+  }
+}
+
+
 
 const checkIfDraw = (board) => {
   let draw = false
@@ -95,30 +120,6 @@ const wannaPlayAgain = () => {
   })
 }
 
-const checkIfAvailable = (spot, board, player) => {
-  let boardCopy = board
-  let win = false
-  if (boardCopy[spot] === "") {
-    boardCopy[spot] = player
-    win = checkIfWin(boardCopy)
-    draw = checkIfDraw(boardCopy)
-    if (draw) {
-      printBoard(boardCopy)
-      console.log('draw! no one wins')
-      wannaPlayAgain()
-    } else {
-      if (!win) {
-        nextMove(boardCopy, player)
-      } else {
-        printBoard(boardCopy)
-        console.log(`${player} wins!`)
-        wannaPlayAgain()
-      }
-    }
-  } else {
-    retryMove(board, player, spot)
-  }
-}
 
 const retryMove = (board, player, spot) => {
   printBoard(board)
@@ -127,7 +128,6 @@ const retryMove = (board, player, spot) => {
     checkIfAvailable(spot - 1, board, player)
   }
   )
-
 }
 
 const nextMove = (board, player) =>{
@@ -135,14 +135,25 @@ const nextMove = (board, player) =>{
   let newPlayer
   if (player === "X") {
     newPlayer = "O"
+    console.log('board', board)
+    let spot
+    if (board[0] === "X" && board[4] !== "O") {
+      spot = 5
+    } else {
+      console.log('random spot!')
+      spot = Math.floor(Math.random() * 9) + 1
+    }
+    checkIfAvailable(spot - 1, board, newPlayer)
   } else {
     newPlayer = "X"
+    readline.question(`${newPlayer}'s turn!\npick a spot to place your ${newPlayer}...`, spot => {
+      console.log(`${newPlayer} picked ${spot}!`);
+      checkIfAvailable(spot - 1, board, newPlayer)
+    }
+    )
   }
-  readline.question(`${newPlayer}'s turn!\npick a spot to place your ${newPlayer}...`, spot => {
-    console.log(`${newPlayer} picked ${spot}!`);
-    checkIfAvailable(spot - 1, board, newPlayer)
-  }
-  )
+
+
 }
 
 
